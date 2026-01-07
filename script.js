@@ -32,7 +32,12 @@ const extractVideoId = () => {
     return videoId;
   }
 
-  if (val.includes("youtube.com")) {
+  else if (val.includes('youtube.com/live/')) {
+    const videoId = new URL(val).pathname.split('/').pop();
+    return videoId;
+  }
+
+  else if (val.includes("youtube.com")) {
     const videoId = new URL(val).searchParams.get("v");
     return videoId;
   }
@@ -40,6 +45,12 @@ const extractVideoId = () => {
 
 const generateThumbnail = () => {
   const id = extractVideoId();
+  if (!id) {
+    thumbsContainer.textContent = 'Please enter the correct URL';
+    input.value = '';
+    return;
+  }
+
   const thumbs = {
     HD: `https://img.youtube.com/vi/${id}/maxresdefault.jpg`, // 1280x720
     SD: `https://img.youtube.com/vi/${id}/sddefault.jpg`, // 640x480
@@ -71,6 +82,7 @@ const generateThumbnail = () => {
     box.appendChild(img);
     thumbsContainer.appendChild(box);
   });
+  input.value = '';
 };
 
 getBtn.addEventListener("click", generateThumbnail);
